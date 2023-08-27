@@ -8,9 +8,10 @@ import (
 )
 
 type Note struct {
-	ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key" json:"id,omitempty"`
-	Title     string    `gorm:"varchar(255);uniqueIndex;not null" json:"title,omitempty"`
-	Content   string    `gorm:"not null" json:"content,omitempty"`
+	// ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key" json:"id,omitempty"`
+	UUID      uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v4();uinique"`
+	Title     string    `gorm:"varchar(255)" json:"title,omitempty"`
+	Content   string    `gorm:"varchar(100)" json:"content,omitempty"`
 	Category  string    `gorm:"varchar(100)" json:"category,omitempty"`
 	Published bool      `gorm:"default:false;not null" json:"published"`
 	CreatedAt time.Time `gorm:"not null" json:"createdAt,omitempty"`

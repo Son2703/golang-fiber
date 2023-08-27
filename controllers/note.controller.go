@@ -1,22 +1,56 @@
 package controllers
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/wpcodevo/golang-fiber/initializers"
 	"github.com/wpcodevo/golang-fiber/models"
 	"gorm.io/gorm"
 )
 
+// func Create_Note_Handle(c *fiber.Ctx) error {
+// 	var payload *models.CreateNoteSchema
+
+// 	if err := c.BodyParser(payload); err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "error": err.Error()})
+// 	}
+
+// 	errors := models.ValidateStruct(payload)
+
+// }
+
+// func valid_body(payload interface{}) error {
+
+// }
+
+func Result(code int, status string, message string) error {
+	var c *fiber.Ctx
+	return c.Status(code).JSON(fiber.Map{
+		"status":  status,
+		"message": message,
+	},
+	)
+}
+
 func CreateNoteHandler(c *fiber.Ctx) error {
 	var payload *models.CreateNoteSchema
-
-	if err := c.BodyParser(&payload); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
+	if err_body := json.Unmarshal(c.Body(), &payload); err_body != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  "fail",
+			"message": err_body.Error(),
+		})
 	}
+
+	// err := c.BodyParser(&payload)
+
+	// if err != nil {
+	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
+	// }
 
 	errors := models.ValidateStruct(payload)
 	if errors != nil {
@@ -26,6 +60,7 @@ func CreateNoteHandler(c *fiber.Ctx) error {
 
 	now := time.Now()
 	newNote := models.Note{
+		UUID:      uuid.New(),
 		Title:     payload.Title,
 		Content:   payload.Content,
 		Category:  payload.Category,
@@ -60,6 +95,26 @@ func FindNotes(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "results": len(notes), "notes": notes})
+}
+
+func FindNote(c *fiber.Ctx) error {
+	page, _ := strconv.Atoi(c.Query("page", "1"))
+	limit, _ := strconv.Atoi(c.Query("limit", "10"))
+	offset := (limit - 1) * page
+
+	var notes []models.Note
+	results := initializers.DB.Limit(limit).Offset(offset).Find(&notes)
+	if results.Error != nil {
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
+			"status": "fail",
+			"errors": results.Error,
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status": "done",
+		"data":   notes,
+	})
+
 }
 
 func UpdateNote(c *fiber.Ctx) error {
