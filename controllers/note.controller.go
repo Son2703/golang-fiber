@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 	"github.com/wpcodevo/golang-fiber/initializers"
 	"github.com/wpcodevo/golang-fiber/models"
 	"gorm.io/gorm"
@@ -60,7 +59,7 @@ func CreateNoteHandler(c *fiber.Ctx) error {
 
 	now := time.Now()
 	newNote := models.Note{
-		UUID:      uuid.New(),
+		// UUID:      uuid.New(),
 		Title:     payload.Title,
 		Content:   payload.Content,
 		Category:  payload.Category,

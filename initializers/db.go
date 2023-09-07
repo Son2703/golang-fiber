@@ -19,6 +19,7 @@ func ConnectDB(config *Config) {
 
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
+		log.Fatal("Config env! \n", config.DBUserName, config.DBHost, config.DBPort, config.DBUserPassword)
 		log.Fatal("Failed to connect to the Database! \n", err.Error())
 		os.Exit(1)
 	}
@@ -27,7 +28,7 @@ func ConnectDB(config *Config) {
 	DB.Logger = logger.Default.LogMode(logger.Info)
 
 	log.Println("Running Migrations")
-	DB.AutoMigrate(&models.Note{})
+	DB.Table("notes").AutoMigrate(&models.Note{})
 
 	log.Println("🚀 Connected Successfully to the Database")
 }

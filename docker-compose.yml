@@ -1,20 +1,30 @@
 version: '3'
 services:
-  postgres:
-    image: postgres:latest
-    container_name: postgres
+  db:
+    container_name: sql_new
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: main
+      MYSQL_USER: son
+      MYSQL_PASSWORD: son
     ports:
-      - '6500:5432'
+      - "3306:3306"
+    networks:
+      - backend
+  apps:
+    container_name: my_apps
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
     volumes:
-      - progresDB:/data/postgres
-    env_file:
-      - ./app.env
-  pgAdmin:
-    image: dpage/pgadmin4
-    container_name: pgAdmin
-    env_file:
-      - ./app.env
-    ports:
-      - "5050:80"
-volumes:
-  progresDB:
+      - ./:/app/golang_fiber
+    networks:
+      - backend
+    depends_on:
+      - db
+networks:
+  backend:
+  

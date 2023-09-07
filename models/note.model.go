@@ -4,12 +4,11 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/google/uuid"
 )
 
 type Note struct {
 	// ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key" json:"id,omitempty"`
-	UUID      uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v4();uinique"`
+	// UUID      uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v4();uinique"`
 	Title     string    `gorm:"varchar(255)" json:"title,omitempty"`
 	Content   string    `gorm:"varchar(100)" json:"content,omitempty"`
 	Category  string    `gorm:"varchar(100)" json:"category,omitempty"`
